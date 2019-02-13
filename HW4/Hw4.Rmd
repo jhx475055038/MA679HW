@@ -1,0 +1,154 @@
+---
+title: "MA679 Hw4"
+output: pdf_document
+author: Jiahao Xu
+date: 2/13/2019
+---
+
+#5.8 (a)
+```{r}
+set.seed(1)
+y <- rnorm(100)
+x <- rnorm(100)
+y <- x - 2 * x^2 + rnorm(100)
+# n is 100 dna p is 2, model is Y=x-2x^2+error
+```
+#(b)
+```{r}
+plot(x, y)
+
+```
+#(c)
+```{r}
+library(boot)
+set.seed(100)
+data<-data.frame(x,y)
+mod1<-glm(y ~ x)
+cv1=cv.glm(data,mod1)$delta[1]
+output=paste("When X is in poly degree 1, CV is", cv1)
+output
+mod2<-glm(y~poly(x,2))
+cv2=cv.glm(data,mod2)$delta[1]
+output=paste("When X is in poly degree 2, CV is", cv2)
+output
+mod3<-glm(y~poly(x,3))
+cv3=cv.glm(data,mod3)$delta[1]
+output=paste("When X is in poly degree 3, CV is", cv3)
+output
+mod4<-glm(y~poly(x,4))
+cv4=cv.glm(data,mod4)$delta[1]
+output=paste("When X is in poly degree 4, CV is", cv4)
+output
+```
+#(d)
+```{r}
+set.seed(50)
+data<-data.frame(x,y)
+mod1<-glm(y ~ x)
+cv1=cv.glm(data,mod1)$delta[1]
+output=paste("When X is in poly degree 1, CV is", cv1)
+output
+mod2<-glm(y~poly(x,2))
+cv2=cv.glm(data,mod2)$delta[1]
+output=paste("When X is in poly degree 2, CV is", cv2)
+output
+mod3<-glm(y~poly(x,3))
+cv3=cv.glm(data,mod3)$delta[1]
+output=paste("When X is in poly degree 3, CV is", cv3)
+output
+mod4<-glm(y~poly(x,4))
+cv4=cv.glm(data,mod4)$delta[1]
+output=paste("When X is in poly degree 4, CV is", cv4)
+output
+# The results form c and d are exactly the same because LOOCV evaluates n folds of a single observation.
+
+```
+#(e)
+```{r}
+#From the CV result, we can see that mod2 has the smallest value, which x is in 2 degree poly. It is what
+#I expect because in the part (a), we can see that the relation is quadratic.
+```
+#(f)
+```{r}
+summary(mod4)
+# From the summary, we can obviously realize that only intercept and quadratic term have the significant p
+# value.This observation is the same with the result from crossvalidation.
+```
+
+#6.2
+```{r}
+# (a) Lasso is less flexible compared to linear regression since it has more restrictions
+# and will give improved prediction accuracy when its increase in bias less than its decrease in variance.
+# (b) Ridge regression is less flexible compared to linear regression since it has more restrictions
+# and will give improved prediction accuracy when its increase in bias less than its decrease in variance.
+# (c) Non-linear regression is more flexible compared to linear regression since it has no restrictions
+# and will give improved prediction accuracy when its increase in variance less than its decrease in bias.
+
+```
+#6.10 (a)
+```{r}
+set.seed(100)
+x <- matrix(rnorm(1000 * 20), 1000, 20)
+b <- rnorm(20)
+b[1] <- 0
+b[4] <- 0
+b[3] <- 0
+b[7] <- 0
+b[19] <- 0
+b[5]<-0
+error <- rnorm(1000)
+y <- x %*% b + error
+
+```
+#(b)
+```{r}
+train <- sample(seq(1000), 100, replace = FALSE)
+x.train <- x[train, ]
+x.test <- x[-train, ]
+y.train <- y[train]
+y.test <- y[-train]
+```
+#(c)
+```{r}
+library(leaps)
+traindata <- data.frame(y = y.train, x = x.train)
+regfit.full <- regsubsets(y ~ ., data = traindata, nvmax = 20)
+train.mat <- model.matrix(y ~ ., data = traindata, nvmax = 20)
+val.errors <- rep(NA, 20)
+for (i in 1:20) {
+    coefi <- coef(regfit.full, id = i)
+    pred <- train.mat[, names(coefi)] %*% coefi
+    val.errors[i] <- mean((pred - y.train)^2)
+}
+plot(val.errors, xlab = "Number of predictors", ylab = "Training MSE", pch = 19, type = "b")
+
+```
+#(d)
+```{r}
+testdata <- data.frame(y = y.test, x = x.train)
+regfit.full2 <- regsubsets(y ~ ., data = testdata , nvmax = 20)
+test.mat <- model.matrix(y ~ ., data = testdata , nvmax = 20)
+val.errors2 <- rep(NA, 20)
+for (i in 1:20) {
+    coefi <- coef(regfit.full2, id = i)
+    pred <- test.mat[, names(coefi)] %*% coefi
+    val.errors2[i] <- mean((pred - y.test)^2)
+}
+plot(val.errors, xlab = "Number of predictors", ylab = "Test MSE", pch = 19, type = "b")
+
+```
+#(e)
+```{r}
+min<-which.min(val.errors2)
+# model with 20 variables has the smallest test MSE
+```
+#(f)
+```{r}
+coef(regfit.full2, min)
+#The best model caught all zeroed out coefficients
+```
+
+#(g)
+```{r}
+
+```
