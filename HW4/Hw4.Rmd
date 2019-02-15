@@ -112,43 +112,39 @@ y.test <- y[-train]
 ```{r}
 library(leaps)
 traindata <- data.frame(y = y.train, x = x.train)
-regfit.full <- regsubsets(y ~ ., data = traindata, nvmax = 20)
+reg <- regsubsets(y ~ ., data = traindata, nvmax = 20)
 train.mat <- model.matrix(y ~ ., data = traindata, nvmax = 20)
-val.errors <- rep(NA, 20)
+error <- rep(NA, 20)
 for (i in 1:20) {
-    coefi <- coef(regfit.full, id = i)
+    coefi <- coef(reg, id = i)
     pred <- train.mat[, names(coefi)] %*% coefi
-    val.errors[i] <- mean((pred - y.train)^2)
+    error[i] <- mean((pred - y.train)^2)
 }
-plot(val.errors, xlab = "Number of predictors", ylab = "Training MSE", pch = 19, type = "b")
+plot(error, xlab = "Number of predictors", ylab = "Training MSE", pch = 19, type = "b")
 
 ```
 #(d)
 ```{r}
 testdata <- data.frame(y = y.test, x = x.train)
-regfit.full2 <- regsubsets(y ~ ., data = testdata , nvmax = 20)
+reg2 <- regsubsets(y ~ ., data = testdata , nvmax = 20)
 test.mat <- model.matrix(y ~ ., data = testdata , nvmax = 20)
-val.errors2 <- rep(NA, 20)
+error2 <- rep(NA, 20)
 for (i in 1:20) {
-    coefi <- coef(regfit.full2, id = i)
+    coefi <- coef(reg2, id = i)
     pred <- test.mat[, names(coefi)] %*% coefi
-    val.errors2[i] <- mean((pred - y.test)^2)
+    error2[i] <- mean((pred - y.test)^2)
 }
-plot(val.errors, xlab = "Number of predictors", ylab = "Test MSE", pch = 19, type = "b")
+plot(error, xlab = "Number of predictors", ylab = "Test MSE", pch = 19, type = "b")
 
 ```
 #(e)
 ```{r}
-min<-which.min(val.errors2)
+min<-which.min(error2)
 # model with 20 variables has the smallest test MSE
 ```
 #(f)
 ```{r}
-coef(regfit.full2, min)
+coef(reg2, min)
 #The best model caught all zeroed out coefficients
 ```
 
-#(g)
-```{r}
-
-```
