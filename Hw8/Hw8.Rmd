@@ -1,0 +1,16 @@
+---
+title: "MA679 Hw8"
+output: pdf_document
+author: Jiahao Xu
+date: 3/28/2019
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#10.3
+```{r}
+
+
+```
