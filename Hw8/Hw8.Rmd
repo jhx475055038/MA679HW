@@ -9,8 +9,131 @@ date: 3/28/2019
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#10.3
+#10.3(a)
+```{r}
+x1<-c(1, 1, 0, 5, 6, 4)
+x2<-c(4, 3, 4, 1, 2, 0)
+data<-data.frame(t(rbind(x1,x2)))
+plot(x1,x2)
+```
+#(b)
+```{r}
+set.seed(5)
+lab <- sample(2, nrow(data), replace = T)
+plot(data[, 1], data[, 2], col = (lab + 1), pch = 20, cex = 2)
+```
+#(c)
 ```{r}
 
+centroid1 <- c(mean(data[lab == 1, 1]), mean(data[lab == 1, 2]))
+centroid2 <- c(mean(data[lab == 2, 1]), mean(data[lab == 2, 2]))
+plot(data[,1], data[,2], col=(lab + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+
+```
+
+#(d)
+```{r}
+labels <- c(2,2,2, 1, 1, 1)
+plot(data[, 1], data[, 2], col = (labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+
+```
+#(e)
+```{r}
+centroid1 <- c(mean(data[labels == 1, 1]), mean(data[labels == 1, 2]))
+centroid2 <- c(mean(data[labels == 2, 1]), mean(data[labels == 2, 2]))
+plot(data[,1], data[,2], col=(labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+
+```
+
+#10.5
+```{r}
+socks <- c(8, 11, 7, 6, 5, 6, 7, 8)
+computers <- c(0, 0, 0, 0, 1, 1, 1, 1)
+#situation one
+data1 <- cbind(socks, computers)
+labels <- c(1, 1, 2, 2, 2, 2, 1, 1)
+plot(data1[, 1], data1[, 2], col=(labels + 1), pch = 20, cex = 2, asp = 1)
+#situation two
+data2 <- cbind(scale(socks, center = FALSE), scale(computers, center = FALSE))
+labels <- c(1, 1, 2, 2, 2, 2, 1, 1)
+plot(data2[, 1], data2[, 2], col=(labels + 1), pch = 20, cex = 2, asp = 1)
+```
+
+#10.8(a)
+```{r}
+store <- prcomp(USArrests, scale = TRUE)
+pr.var <-store$sdev^2
+pve <- pr.var / sum(pr.var)
+pve
+sum(pr.var)
+```
+#(b)
+```{r}
+rot <- store$rotation
+sumvar <- sum(apply(as.matrix(scale(USArrests))^2, 2, sum))
+apply((as.matrix(scale(USArrests)) %*% rot)^2, 2, sum) / sumvar
+
+```
+
+#10.9(a)
+```{r}
+set.seed(5)
+complete <- hclust(dist(USArrests), method = "complete")
+plot(complete )
+
+```
+#(b)
+```{r}
+cutree(complete, 3)
+```
+#(c)
+```{r}
+complete.sd <- hclust(dist( scale(USArrests)), method = "complete")
+plot(complete.sd)
+```
+#(d)
+```{r}
+cutree(complete.sd, 3)
+table(cutree(complete, 3), cutree(complete.sd, 3))
+```
+#10.10(a)
+```{r}
+set.seed(5)
+df<- matrix(rnorm(20 * 3 * 50, mean = 0, sd = 0.001), ncol = 50)
+df[1:20, 1] <- 2
+df[21:40, 1] <- 2
+df[21:40, 2] <- 1
+df[41:60, 2] <- 2
+labels <- c(rep(1, 20), rep(2, 20), rep(3, 20))
+
+```
+#(b)
+```{r}
+pr.out <- prcomp(df)
+#plot(pr.out$df[, 1:2], col =(labels + 1), pch = 19)
+
+```
+#(c)
+```{r}
+km1 <- kmeans(df, 3, nstart = 20)
+table(labels, km1$cluster)
+
+```
+#(d)
+```{r}
+km2<- kmeans(df, 2, nstart = 20)
+table(labels, km2$cluster)
+
+```
+#(e)
+```{r}
+km3 <- kmeans(df, 3, nstart = 20)
+table(labels, km3$cluster)
 
 ```
